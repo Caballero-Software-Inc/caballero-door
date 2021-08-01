@@ -226,7 +226,7 @@ app.post('/apiauthentication', (request, response) => {
             if (users[j].email == "caballero@caballero.software") {
                 response.json({ ok: true, database: users }) /* the identifier provided by the user was found */
             } else {
-                response.json({ ok: true, userData: users[j] }) /* the identifier provided by the user was found */
+                response.json({ ok: true, new: (users[j].minor == undefined) }) /* the identifier provided by the user was found */
             }
 
         } else {
@@ -280,7 +280,15 @@ app.post('/apiauthenticationservice', (request, response) => {
             if (request.body.minor) {
                 users[j].minor = true
             } else {
-                users[j].minor = false
+                users[j].minor = false;
+                users[j].firstName = request.body.firstName;
+                users[j].lastName = request.body.lastName;
+                users[j].address = request.body.address;
+                users[j].phone = request.body.phone;
+                users[j].birth = request.body.birth;
+                users[j].sin = request.body.sin;
+                users[j].employment = request.body.employment;
+                users[j].educational = request.body.educational;
                 users[j].web = request.body.web;
                 users[j].selfie = request.body.selfie;
             }
@@ -303,7 +311,17 @@ app.post('/apitiddoor', (request, response) => {
 
     if (users[j].email == request.body.userEmail) {
         // users[j]
-        users[j].TId = makeTId(4);
+
+        let candidate;
+        let exptime = 2; //Exponential time for the daltonic demon
+
+        do {
+            candidate = makeTId( Math.ceil( Math.log(exptime)/Math.log(34) )  );
+            exptime += 1;
+        } while ( users.filter(u => u.TId == candidate).length != 0 );
+
+        users[j].TId = candidate;
+
         response.json({ ok: true, myTId: users[j].TId });
     } else {
         response.json({ ok: false })

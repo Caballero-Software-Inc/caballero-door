@@ -31,6 +31,10 @@ let checkOpen = true; // check to open an account
 
 let checkOpenDoorAdult = true;
 
+let checkOpenDoorAdult3 = true;
+let checkOpenDoorAdult4 = true;
+let checkOpenDoorAdult5 = true;
+
 
 
 function makeId(length) {
@@ -76,11 +80,19 @@ function mainOpen() {
     email: document.getElementById('emailId').value,
     language: userLang,
     recovery: Date.now(),
-    minor: undefined,
-    web: "",
-    selfie: "",//selfie
     hostility: [],
-    verified: false,
+    verified: false, //verified by the private investigator
+    minor: undefined,
+    firstName: "",
+    lastName: "",
+    address: "",
+    phone: "",
+    birth: "",
+    sin: "",
+    employment: "",
+    educational: "",
+    web: "", 
+    selfie: "",
     TId: "" //temporal identifier
   };
   const options = {
@@ -225,10 +237,14 @@ function authentication() {
       if (userEmail == "caballero@caballero.software") {
         database = respo.database;
         localStorage.setItem("database", JSON.stringify(database));
-        localStorage.setItem("page", "admin");
-        location.reload();
+        goToPage(0);
       } else {
-        goToPage(5);
+        if (respo.new) {
+          goToPage(5);
+        } else {
+          goToPage(6);
+        }
+        
       }
     } else {
       switch (parseInt(userLang)) {
@@ -489,40 +505,65 @@ function languageChoice() {
 // Caballero|Door
 
 function registerDoor() {
-  let jsonBody;
-  if (checkOpenDoorAdult) {    
-    jsonBody = { userId, userEmail, minor : true };
-  } else {
-    jsonBody = { userId, userEmail, minor : false,  web : document.getElementById('inputWebsiteDoor').value, selfie: photo };
-  };
-
-  const options = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(jsonBody)
-  };
-
-  fetch('/apiauthenticationservice', options).then(async response => {
-    let respo = await response.json();
-    if (respo.ok) {
-      photo = '';
-      goToPage(6);
+  if (checkOpenDoorAdult ? true : !(checkOpenDoorAdult3 || checkOpenDoorAdult4 || checkOpenDoorAdult5)) {
+    let jsonBody;
+    if (checkOpenDoorAdult) {
+      jsonBody = { userId, userEmail, minor: true };
     } else {
-      switch (parseInt(userLang)) {
-        case 0:
-          document.getElementById('webcontent').innerHTML += "<p>Authentication error. Try again.</p>";
-          break;
-        case 1:
-          document.getElementById('webcontent').innerHTML += "<p>Erreur d'authentification. Réessayer.</p>";
-          break;
-        default:
-          document.getElementById('titleId').innerHTML = '<h1 class="w3-margin w3-xlarge">???</h1>';
-          break;
-      };
+      jsonBody = { userId, userEmail, minor: false, 
+      firstName: document.getElementById('firstNameDoor').value,
+      lastName: document.getElementById('lastNameDoor').value,
+      address: document.getElementById('addressDoor').value,
+      phone: document.getElementById('phoneDoor').value,
+      birth: document.getElementById('birthDoor').value,
+      sin: document.getElementById('sinDoor').value,
+      employment: document.getElementById('employmentDoor').value,
+      educational: document.getElementById('educationalDoor').value,
+      web: document.getElementById('inputWebsiteDoor').value, 
+      selfie: photo };
     };
-  });
+
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(jsonBody)
+    };
+
+    fetch('/apiauthenticationservice', options).then(async response => {
+      let respo = await response.json();
+      if (respo.ok) {
+        photo = '';
+        goToPage(6);
+      } else {
+        switch (parseInt(userLang)) {
+          case 0:
+            document.getElementById('webcontent').innerHTML += "<p>Authentication error. Try again.</p>";
+            break;
+          case 1:
+            document.getElementById('webcontent').innerHTML += "<p>Erreur d'authentification. Réessayer.</p>";
+            break;
+          default:
+            document.getElementById('titleId').innerHTML = '<h1 class="w3-margin w3-xlarge">???</h1>';
+            break;
+        };
+      };
+    });
+  } else {
+    switch (parseInt(userLang)) {
+      case 0:
+        alert('To use Caballero|Door, you must give your explicit consent.');
+        break;
+      case 1:
+        alert('Pour utiliser Caballero|Door, vous devez donner votre consentement explicite.');
+        break;
+      default:
+        document.getElementById('titleId').innerHTML = '<h1 class="w3-margin w3-xlarge">???</h1>';
+        break;
+    };
+    
+  }
 }
 
 const toBase64 = file => new Promise((resolve, reject) => {
@@ -538,20 +579,84 @@ async function SavePhoto(inp) {
   photo = await toBase64(inp.files[0]);
 }
 
+
 function insertPictureDoor() {
   if (checkOpenDoorAdult) {
     switch (parseInt(userLang)) {
       case 0:
-        document.getElementById('websiteDoor').innerHTML = "<p>Link to a website where your email and image appear. The more institutional, the better.</p>";
-        document.getElementById('websiteDoor').innerHTML += '<input type="text" id = "inputWebsiteDoor"> <br><br>';
-        document.getElementById('pictureDoor').innerHTML = "<p>Would you please upload a selfie of your face so that it can be easily identified?</p>";
+        
+        document.getElementById('pictureDoor').innerHTML = "<p>Would you please upload a selfie of your face so that it can be easily identified? Uploading your selfie, you are giving your consent to share it with Caballero|Door users.</p>";
         document.getElementById('pictureDoor').innerHTML += '<input id="image-file" type="file" onchange="SavePhoto(this)"><br><br>';
+
+        document.getElementById('websiteDoor').innerHTML = "<h4>The information below is intended for the licensed private investigator. It will not be shared with Caballero|Door users.</h4>";
+
+        document.getElementById('websiteDoor').innerHTML += "<p>First Name</p>";
+        document.getElementById('websiteDoor').innerHTML += '<input type="text" id = "firstNameDoor"> <br><br>';
+        
+        document.getElementById('websiteDoor').innerHTML += "<p>Last Name</p>";
+        document.getElementById('websiteDoor').innerHTML += '<input type="text" id = "lastNameDoor"> <br><br>';
+       
+        document.getElementById('websiteDoor').innerHTML += "<p>Address</p>";
+        document.getElementById('websiteDoor').innerHTML += '<input type="text" id = "addressDoor"> <br><br>';
+       
+        document.getElementById('websiteDoor').innerHTML += "<p>Phone Number</p>";
+        document.getElementById('websiteDoor').innerHTML += '<input type="text" id = "phoneDoor"> <br><br>';
+       
+        document.getElementById('websiteDoor').innerHTML += "<p>Date of Birth</p>";
+        document.getElementById('websiteDoor').innerHTML += '<input type="text" id = "birthDoor"> <br><br>';
+       
+        document.getElementById('websiteDoor').innerHTML += "<p>Social Insurance Number</p>";
+        document.getElementById('websiteDoor').innerHTML += '<input type="text" id = "sinDoor"> <br><br>';
+       
+        document.getElementById('websiteDoor').innerHTML += "<p>Last employment</p>";
+        document.getElementById('websiteDoor').innerHTML += '<input type="text" id = "employmentDoor"> <br><br>';
+       
+        document.getElementById('websiteDoor').innerHTML += "<p>Last educational institution</p>";
+        document.getElementById('websiteDoor').innerHTML += '<input type="text" id = "educationalDoor"> <br><br>';
+        
+        document.getElementById('websiteDoor').innerHTML += "<p>Link to a website where your email and image appear. The more institutional, the better.</p>";
+        document.getElementById('websiteDoor').innerHTML += '<input type="text" id = "inputWebsiteDoor"> <br><br>';
+        
+
+        document.getElementById('confirmButtonIdDoor').innerHTML = "<h4>Explicit consent to use Caballero|Door as an adult</h4>";
+        document.getElementById('confirmButtonIdDoor').innerHTML += "<p><input type='checkbox' id='myCheck3' onclick='checkOpenDoorAdult3 = ! checkOpenDoorAdult3;'> I consent to Caballero Software Inc. to hire a licensed private investigator to make a judgement, based on the evidence, whether I may be hostile to some communities. I also consent to this licensed private investigator, selected by Caballero Software Inc., to search about me both online and offline.</p>";
+        document.getElementById('confirmButtonIdDoor').innerHTML += "<p><input type='checkbox' id='myCheck4' onclick='checkOpenDoorAdult4 = ! checkOpenDoorAdult4;'> Based on the licensed private investigator's report, I consent to Caballero Software Inc. judging which communities I may be hostile to. If I disagree with this judgement, I will either appeal to Caballero Software Inc. with further evidence or delete my account to erase this information from Caballero Software Inc.'s database.</p>";
+        document.getElementById('confirmButtonIdDoor').innerHTML += "<p><input type='checkbox' id='myCheck5' onclick='checkOpenDoorAdult5 = ! checkOpenDoorAdult5;'> I consent to Caballero Software Inc. sharing the above-mentioned judgment (but not the evidence) with Caballero|Door users and only with these users. This consent will end if I delete my account, and the information will be automatically removed from Caballero Software Inc.'s database.</p>";
+
         break;
       case 1:
-        document.getElementById('websiteDoor').innerHTML = "<p>Lien vers un site Web où votre e-mail et votre image apparaissent. Plus c'est institutionnel, mieux c'est.</p>";
-        document.getElementById('websiteDoor').innerHTML += '<input type="text" id = "inputWebsiteDoor"> <br><br>';
-        document.getElementById('pictureDoor').innerHTML = "<p>Pourriez-vous s'il vous plaît prendre un selfie de votre visage afin qu'il puisse être facilement identifié ?</p>";
+        document.getElementById('pictureDoor').innerHTML = "<p>Pourriez-vous s'il vous plaît télécharger un selfie de votre visage afin qu'il puisse être facilement identifié ? En téléchargeant votre selfie, vous consentez à le partager avec les utilisateurs de Caballero|Door.</p>";
         document.getElementById('pictureDoor').innerHTML += '<input id="image-file" type="file" onchange="SavePhoto(this)"><br><br>';
+
+        document.getElementById('websiteDoor').innerHTML = "<h4>Les informations ci-dessous sont destinées au détective privé agréé. Il ne sera pas partagé avec les utilisateurs de Caballero|Door.</h4>";
+
+        document.getElementById('websiteDoor').innerHTML += "<p>Prénom</p>";
+        document.getElementById('websiteDoor').innerHTML += '<input type="text" id = "firstNameDoor"> <br><br>';
+        
+        document.getElementById('websiteDoor').innerHTML += "<p>Nom</p>";
+        document.getElementById('websiteDoor').innerHTML += '<input type="text" id = "lastNameDoor"> <br><br>';
+       
+        document.getElementById('websiteDoor').innerHTML += "<p>Adresse</p>";
+        document.getElementById('websiteDoor').innerHTML += '<input type="text" id = "addressDoor"> <br><br>';
+       
+        document.getElementById('websiteDoor').innerHTML += "<p>Numéro de téléphone</p>";
+        document.getElementById('websiteDoor').innerHTML += '<input type="text" id = "phoneDoor"> <br><br>';
+       
+        document.getElementById('websiteDoor').innerHTML += "<p>Date de naissance</p>";
+        document.getElementById('websiteDoor').innerHTML += '<input type="text" id = "birthDoor"> <br><br>';
+       
+        document.getElementById('websiteDoor').innerHTML += "<p>Numéro d'assurance sociale</p>";
+        document.getElementById('websiteDoor').innerHTML += '<input type="text" id = "sinDoor"> <br><br>';
+       
+        document.getElementById('websiteDoor').innerHTML += "<p>Dernier emploi</p>";
+        document.getElementById('websiteDoor').innerHTML += '<input type="text" id = "employmentDoor"> <br><br>';
+       
+        document.getElementById('websiteDoor').innerHTML += "<p>Dernier établissement d'enseignement</p>";
+        document.getElementById('websiteDoor').innerHTML += '<input type="text" id = "educationalDoor"> <br><br>';
+        
+        document.getElementById('websiteDoor').innerHTML += "<p>Lien vers un site Web où votre e-mail et votre image apparaissent. Plus c'est institutionnel, mieux c'est.</p>";
+        document.getElementById('websiteDoor').innerHTML += '<input type="text" id = "inputWebsiteDoor"> <br><br>';
+        
         break;
       default:
         document.getElementById('titleId').innerHTML = '<h1 class="w3-margin w3-xlarge">???</h1>';
@@ -561,7 +666,11 @@ function insertPictureDoor() {
   } else {
     document.getElementById('websiteDoor').innerHTML = "";
     document.getElementById('pictureDoor').innerHTML = "";
+    document.getElementById('confirmButtonIdDoor').innerHTML = "";
     checkOpenDoorAdult = true;
+    checkOpenDoorAdult3 = true;
+    checkOpenDoorAdult4 = true;
+    checkOpenDoorAdult5 = true;
   }
 }
 
@@ -573,12 +682,12 @@ function doorMenuNew() {
       document.getElementById('titleId').innerHTML = '<h1 class="w3-margin w3-xlarge">' + userEmail + '</h1>';
       document.getElementById('titleId').innerHTML += "<h2>Personal information</h2>";
       document.getElementById('authcontent').innerHTML += "<Br></Br>";
-      
+
       document.getElementById('authcontent').innerHTML += "<p><input type='checkbox' id='myCheck2' onclick='insertPictureDoor();'> I am an adult according to the legislation of my country.</p>";
 
       document.getElementById('authcontent').innerHTML += "<div id='checkboxDoorAdult'></div>";
-      document.getElementById('authcontent').innerHTML += "<div id='websiteDoor'></div>";
       document.getElementById('authcontent').innerHTML += "<div id='pictureDoor'></div>";
+      document.getElementById('authcontent').innerHTML += "<div id='websiteDoor'></div>";
       document.getElementById('authcontent').innerHTML += "<div id='confirmButtonIdDoor'></div>";
 
       document.getElementById("authcontent").innerHTML += "<br><button onclick='registerDoor();'>Next</button><Br></Br>";
@@ -587,16 +696,16 @@ function doorMenuNew() {
       document.getElementById('titleId').innerHTML = '<h1 class="w3-margin w3-xlarge">' + userEmail + '</h1>';
       document.getElementById('titleId').innerHTML += "<h2>Renseignements personnels</h2>";
       document.getElementById('authcontent').innerHTML += "<Br></Br>";
-      
+
       document.getElementById('authcontent').innerHTML += "<p><input type='checkbox' id='myCheck2' onclick='insertPictureDoor();'> Je suis majeur selon la législation de mon pays.</p>";
 
       document.getElementById('authcontent').innerHTML += "<div id='checkboxDoorAdult'></div>";
-      document.getElementById('authcontent').innerHTML += "<div id='websiteDoor'></div>";
       document.getElementById('authcontent').innerHTML += "<div id='pictureDoor'></div>";
+      document.getElementById('authcontent').innerHTML += "<div id='websiteDoor'></div>";
       document.getElementById('authcontent').innerHTML += "<div id='confirmButtonIdDoor'></div>";
 
       document.getElementById("authcontent").innerHTML += "<br><button onclick='registerDoor();'>Suivant</button><Br></Br>";
-      
+
       break;
     default:
       document.getElementById('titleId').innerHTML = '<h1 class="w3-margin w3-xlarge">???</h1>';
@@ -662,14 +771,14 @@ function otherIdDoorGetData() {
         case 1:
           document.getElementById('otherIdDoorData').innerHTML = "<p>Est-ce la personne en face de vous ?</p>";
           document.getElementById('otherIdDoorData').innerHTML += "<br><img src='" + respo.picture + "' alt='person' width='200' height='185' />";
-          document.getElementById('otherIdDoorData').innerHTML += "<p>Hostilité: </p>";
+          document.getElementById('otherIdDoorData').innerHTML += "<p>Hostilité : </p>";
 
           if (respo.verified) {
             for (let b of respo.hostility) {
               document.getElementById('otherIdDoorData').innerHTML += "<p>-" + b + "</p>";
             }
           } else {
-            document.getElementById('otherIdDoorData').innerHTML += "<p>Pas encore vérifié.</p>";
+            document.getElementById('otherIdDoorData').innerHTML += "<p>Pas encore vérifiée.</p>";
           }
 
           break;
@@ -698,7 +807,7 @@ function doorMenuExisting() {
   switch (parseInt(userLang)) {
     case 0:
       document.getElementById('titleId').innerHTML = '<h1 class="w3-margin w3-xlarge">' + userEmail + '</h1>';
-      document.getElementById('subtitleId').innerHTML += "<p class='w3-large'>Caballero|Door.</p>";
+      document.getElementById('subtitleId').innerHTML += "<p class='w3-large'>Caballero|Door</p>";
       document.getElementById('authcontent').innerHTML = "<button onclick='updateIdDoor();'>Update my temporary identifier</button>";
       document.getElementById('authcontent').innerHTML += "<p id='myIdDoor'></p>";
       document.getElementById('authcontent').innerHTML += "<p>Temporary identifier of another person</p>";
@@ -717,7 +826,7 @@ function doorMenuExisting() {
       break;
     case 1:
       document.getElementById('titleId').innerHTML = '<h1 class="w3-margin w3-xlarge">' + userEmail + '</h1>';
-      document.getElementById('subtitleId').innerHTML += "<p class='w3-large'>Caballero|Porte.</p>";
+      document.getElementById('subtitleId').innerHTML += "<p class='w3-large'>Caballero|Porte</p>";
       document.getElementById('authcontent').innerHTML = "<button onclick='updateIdDoor();'>Mettre à jour mon identifiant temporaire</button>";
       document.getElementById('authcontent').innerHTML += "<p id='myIdDoor'></p>";
       document.getElementById('authcontent').innerHTML += "<p>Identifiant temporaire d'une autre personne</p>";
@@ -733,7 +842,7 @@ function doorMenuExisting() {
       document.getElementById('authcontent').innerHTML += "<p>Supprimer mon compte</p>"
       document.getElementById('authcontent').innerHTML += "<button onclick='deleteUser();'>Supprimer</button>";
       document.getElementById('authcontent').innerHTML += '<hr style="height:2px;border-width:0;color:gray;background-color:gray">';
-       break;
+      break;
     default:
       document.getElementById('titleId').innerHTML = '<h1 class="w3-margin w3-xlarge">???</h1>';
       break;
