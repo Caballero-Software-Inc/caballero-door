@@ -18,14 +18,12 @@ const locUpdateTime = 1000; // update of location (in the server)
 localStorage.setItem("page", "");
 localStorage.setItem("userId", "");
 localStorage.setItem("userEmail", "");
-localStorage.setItem("userData", "");
 localStorage.setItem("database", "");
 */
 
 let page = localStorage.getItem("page");
 let userId = localStorage.getItem("userId");
 let userEmail = localStorage.getItem("userEmail");
-let userData = localStorage.getItem("userData");
 let database = localStorage.getItem("database");
 let photo;
 
@@ -230,8 +228,6 @@ function authentication() {
         localStorage.setItem("page", "admin");
         location.reload();
       } else {
-        userData = respo.userData;
-        localStorage.setItem("userData", JSON.stringify(userData));
         goToPage(5);
       }
     } else {
@@ -352,7 +348,6 @@ function retrieveIdentifier() {
 function logoutUser() {
   localStorage.setItem("userId", "");
   localStorage.setItem("userEmail", "");
-  localStorage.setItem("userData", "");
   localStorage.setItem("page", "");
   location.reload();
 }
@@ -408,6 +403,7 @@ function deleteUser() {
           localStorage.setItem("userEmail", "");
           localStorage.setItem("userLang", 0);
           confirm("Votre compte a été supprimé");
+          localStorage.setItem("page", "");
           location.reload();
         });
       } else {
@@ -431,6 +427,7 @@ function introMenu() {
       document.getElementById('titleId').innerHTML = '<h1 class="w3-margin w3-xlarge">Welcome to Caballero|Door</h1>';
       document.getElementById('subtitleId').innerHTML = '<p class="w3-large">A hate crime prevention service provided by Caballero Software Inc.</p>';
       document.getElementById('subtitleId').innerHTML += '<p class="w3-large">version: ' + version + '</p>';
+      document.getElementById('subtitleId').innerHTML += "<p class='w3-large'>Disclaimer: This version of Caballero|Door is not a service but a test of the prototype. Caballero Software Inc. does not enter into any contracts with users regarding this test. Participation in this test is at the risk and peril of the participant.</p>";
       document.getElementById('webcontent').innerHTML += "<br><br><button onclick='goToPage(2)'>Open account</button>";
       document.getElementById('webcontent').innerHTML += '<br><br><button onclick="goToPage(3);">I have an account</button><br><br>';
       document.getElementById('footerId').innerHTML = "<h1>Contact</h1>";
@@ -447,6 +444,7 @@ function introMenu() {
       document.getElementById('titleId').innerHTML = '<h1 class="w3-margin w3-xlarge">Bienvenue chez Caballero|Porte</h1>';
       document.getElementById('subtitleId').innerHTML = "<p class='w3-large'>Un service de prévention des crimes haineux fourni par Caballero Software Inc.</p>";
       document.getElementById('subtitleId').innerHTML += '<p class="w3-large">version: ' + version + '</p>';
+      document.getElementById('subtitleId').innerHTML += "<p class='w3-large'>Avis de non-responsabilité : Cette version de Caballero|Door n'est pas un service mais un test du prototype. Caballero Software Inc. ne conclut aucun contrat avec les utilisateurs concernant ce test. La participation à ce test est aux risques et périls du participant.</p>";
       document.getElementById('webcontent').innerHTML += "<br><br><button onclick='goToPage(2)'>Ouvrir un compte</button>";
       document.getElementById('webcontent').innerHTML += "<br><br><button onclick='goToPage(3)'>J'ai un compte</button><br><br>";
       document.getElementById('footerId').innerHTML = "<h1>Nous joindre</h1>";
@@ -742,19 +740,7 @@ function doorMenuExisting() {
   };
 }
 
-function doorMenu() {
-  const myData = JSON.parse(userData);
-  if (myData.services.find(x => x == "door") == undefined) {
-    goToPage(5);
-  } else {
-    goToPage(6);
-  }
-}
 
-
-// page selector
-// const myData = JSON.parse(userData);
-// alert ( JSON.stringify(myData));
 
 
 switch (page) {
