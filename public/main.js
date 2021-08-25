@@ -448,7 +448,7 @@ function introMenu() {
       document.getElementById('webcontent').innerHTML += '<br><br><button onclick="goToPage(3);">I have an account</button><br><br>';
       document.getElementById('footerId').innerHTML = "<h1>Contact</h1>";
       document.getElementById('footerId').innerHTML += "<h4>Caballero Software Inc.</h4>";
-      document.getElementById('footerId').innerHTML += '<p style="white-space: pre-line">Address: 201 Lester St, Unit 303, Waterloo, ON Canada N2L 3W3 <br>';
+      document.getElementById('footerId').innerHTML += '<p style="white-space: pre-line">Address: 2-34 Columbia St W, Waterloo, ON, Canada, N2L 3K5 <br>';
       document.getElementById('footerId').innerHTML += 'Email: caballero@caballero.software <br><br>';
       document.getElementById('footerId').innerHTML += 'Phone: +1 (438) 993-2054 <br><br>';
       document.getElementById('footerId').innerHTML += 'Website: <a href="https://caballero.software/">https://caballero.software/</a></p>';
@@ -465,7 +465,7 @@ function introMenu() {
       document.getElementById('webcontent').innerHTML += "<br><br><button onclick='goToPage(3)'>J'ai un compte</button><br><br>";
       document.getElementById('footerId').innerHTML = "<h1>Nous joindre</h1>";
       document.getElementById('footerId').innerHTML += "<h4>Caballero Software Inc.</h4>";
-      document.getElementById('footerId').innerHTML += '<p style="white-space: pre-line">Adresse: 201 Lester St, Unit 303, Waterloo, ON Canada N2L 3W3 <br>';
+      document.getElementById('footerId').innerHTML += '<p style="white-space: pre-line">Adresse: 2-34 Columbia St W, Waterloo, ON, Canada, N2L 3K5 <br>';
       document.getElementById('footerId').innerHTML += 'Courrier Électronique: caballero@caballero.software <br><br>';
       document.getElementById('footerId').innerHTML += 'Téléphone: +1 (438) 993-2054 <br><br>';
       document.getElementById('footerId').innerHTML += 'Site Internet: <a href="https://caballero.software/">https://caballero.software/indexfr.html</a></p>';
